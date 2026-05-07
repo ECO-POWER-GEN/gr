@@ -1,7 +1,7 @@
 {
   "name": "@figma/my-make-file",
   "private": true,
-  "homepage": "https://eco-power-gen.github.io/gr/",
+  "homepage": "https://ecopowergen.co.kr",
   "version": "0.0.1",
   "type": "module",
   "scripts": {
