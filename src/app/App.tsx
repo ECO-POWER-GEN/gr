@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Menu, X, Phone, Mail, MapPin, Zap, Truck, Shield, CheckCircle } from 'lucide-react';
 import logoImage from '../imports/logo_1줄.png';
 import bannerImage from '../imports/banner.png';
+import OnlineInquiry from './components/OnlineInquiry';
 
 type TabType = '메인화면' | '차량소개' | '설치사례' | '온라인문의';
 
@@ -206,6 +207,8 @@ export default function App() {
               </div>
             </section> */}
           </>
+        ) : activeTab === '온라인문의' ? (
+          <OnlineInquiry />
         ) : (
           <section className="py-32 bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
