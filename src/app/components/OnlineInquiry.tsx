@@ -1,5 +1,6 @@
-import { useState, FormEvent } from 'react';
-import { Send, ChevronLeft, PenLine, MapPin, Calendar, User, Building2, Phone, Mail, FileText, Inbox } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Send, ChevronLeft, PenLine, MapPin, Calendar, User, Building2, Phone, Mail, FileText, Inbox, Loader2 } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 interface InquiryPost {
   id: string;
@@ -11,26 +12,21 @@ interface InquiryPost {
   dateFrom: string;
   dateTo: string;
   message: string;
-  createdAt: string;
+  created_at: string;
 }
 
 type View = 'list' | 'form' | 'detail';
 
-const STORAGE_KEY = 'epg_inquiries';
-
-function loadPosts(): InquiryPost[] {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  } catch {
-    return [];
-  }
-}
-
-function savePosts(posts: InquiryPost[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
-}
-
-type FormData = Omit<InquiryPost, 'id' | 'createdAt'>;
+type FormData = {
+  name: string;
+  company: string;
+  phone: string;
+  email: string;
+  address: string;
+  dateFrom: string;
+  dateTo: string;
+  message: string;
+};
 
 const emptyForm: FormData = {
   name: '', company: '', phone: '', email: '',
@@ -48,38 +44,52 @@ const pageHeader = (
 
 export default function OnlineInquiry() {
   const [view, setView] = useState<View>('list');
-  const [posts, setPosts] = useState<InquiryPost[]>(loadPosts);
+  const [posts, setPosts] = useState<InquiryPost[]>([]);
   const [selectedPost, setSelectedPost] = useState<InquiryPost | null>(null);
   const [form, setForm] = useState<FormData>(emptyForm);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  async function fetchPosts() {
+    setLoading(true);
+    setError(null);
+    const { data, error } = await supabase
+      .from('Inquiry')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) {
+      setError('문의 목록을 불러오는 데 실패했습니다.');
+    } else {
+      setPosts(data ?? []);
+    }
+    setLoading(false);
+  }
 
   const handleChange = (field: keyof FormData, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    const newPost: InquiryPost = {
-      ...form,
-      id: Date.now().toString(),
-      createdAt: new Date().toLocaleDateString('ko-KR'),
-    };
-    const updated = [newPost, ...posts];
-    setPosts(updated);
-    savePosts(updated);
+    setSubmitting(true);
+    setError(null);
 
-    const subject = `[온라인 문의] ${form.name}${form.company ? ` / ${form.company}` : ''}`;
-    const body = [
-      `성함: ${form.name}`,
-      `회사명: ${form.company}`,
-      `연락처: ${form.phone}`,
-      `이메일: ${form.email}`,
-      `현장 주소: ${form.address}`,
-      `기간: ${form.dateFrom} ~ ${form.dateTo}`,
-      ``,
-      `상세 문의 내용:`,
-      form.message,
-    ].join('\n');
+    const { error } = await supabase.from('Inquiry').insert([form]);
+
+    if (error) {
+      setError(`오류: ${error.message} (code: ${error.code})`);
+      setSubmitting(false);
+      return;
+    }
+
     setForm(emptyForm);
+    setSubmitting(false);
+    await fetchPosts();
     setView('list');
   };
 
@@ -92,11 +102,13 @@ export default function OnlineInquiry() {
       <>
         {pageHeader}
         <section className="py-16 bg-gray-50">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center mb-5">
-              <p className="text-sm text-gray-500">총 <span className="font-semibold text-gray-700">{posts.length}</span>건</p>
+              <p className="text-sm text-gray-600">
+                총 <span className="font-semibold text-gray-600">{posts.length}</span>건
+              </p>
               <button
-                onClick={() => setView('form')}
+                onClick={() => { setError(null); setView('form'); }}
                 className="bg-[#8BC34A] hover:bg-[#689F38] text-white px-5 py-2.5 rounded-lg transition-colors flex items-center gap-2 font-medium text-sm"
               >
                 <PenLine size={15} />
@@ -104,48 +116,61 @@ export default function OnlineInquiry() {
               </button>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[560px]">
-                  <thead>
-                    <tr className="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      <th className="px-6 py-3 text-center w-14">번호</th>
-                      <th className="px-6 py-3 text-left">현장 주소</th>
-                      <th className="px-4 py-3 text-left w-28">성함</th>
-                      <th className="px-4 py-3 text-left w-36">기간</th>
-                      <th className="px-6 py-3 text-center w-24">등록일</th>
+            {error && (
+              <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg">
+                {error}
+              </div>
+            )}
+
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[600px]">
+                <thead>
+                  <tr className="border-b-2 border-gray-100">
+                    <th className="pb-4 text-center w-14 text-xs font-medium text-gray-400 tracking-widest uppercase">No</th>
+                    <th className="pb-4 text-left text-xs font-medium text-gray-400 tracking-widest uppercase">현장 주소</th>
+                    <th className="pb-4 text-left w-28 text-xs font-medium text-gray-400 tracking-widest uppercase">작성자</th>
+                    <th className="pb-4 text-left w-40 text-xs font-medium text-gray-400 tracking-widest uppercase">기간</th>
+                    <th className="pb-4 text-center w-24 text-xs font-medium text-gray-400 tracking-widest uppercase">작성날짜</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {loading ? (
+                    <tr>
+                      <td colSpan={5} className="py-24 text-center text-gray-300">
+                        <Loader2 size={28} className="mx-auto mb-3 animate-spin" />
+                        <p className="text-sm">불러오는 중...</p>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {posts.length === 0 ? (
-                      <tr>
-                        <td colSpan={5} className="py-24 text-center text-gray-400">
-                          <Inbox size={40} className="mx-auto mb-3 opacity-30" />
-                          <p className="text-sm">등록된 문의가 없습니다.</p>
+                  ) : posts.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="py-24 text-center text-gray-300">
+                        <Inbox size={36} className="mx-auto mb-3" />
+                        <p className="text-sm">등록된 문의가 없습니다.</p>
+                      </td>
+                    </tr>
+                  ) : (
+                    posts.map((post, index) => (
+                      <tr
+                        key={post.id}
+                        onClick={() => { setSelectedPost(post); setView('detail'); }}
+                        className="group hover:bg-gray-50 cursor-pointer transition-colors"
+                      >
+                        <td className="py-5 text-center text-sm text-gray-300">{posts.length - index}</td>
+                        <td className="py-5 text-sm font-medium text-gray-800 max-w-xs truncate pr-4 group-hover:text-[#689F38] transition-colors">
+                          {post.address || '-'}
+                        </td>
+                        <td className="py-5 text-sm text-gray-500">{post.name}</td>
+                        <td className="py-5 text-xs text-gray-400 leading-relaxed">
+                          {post.dateFrom} ~ {post.dateTo}
+                        </td>
+                        <td className="py-5 text-center text-xs text-gray-400">
+                          {new Date(post.created_at).toLocaleDateString('ko-KR')}
                         </td>
                       </tr>
-                    ) : (
-                      posts.map((post, index) => (
-                        <tr
-                          key={post.id}
-                          onClick={() => { setSelectedPost(post); setView('detail'); }}
-                          className="border-b border-gray-100 last:border-0 hover:bg-[#8BC34A]/5 cursor-pointer transition-colors"
-                        >
-                          <td className="px-6 py-4 text-center text-sm text-gray-400">{posts.length - index}</td>
-                          <td className="px-6 py-4 text-sm font-medium text-gray-800 max-w-xs truncate">
-                            {post.address || '-'}
-                          </td>
-                          <td className="px-4 py-4 text-sm text-gray-600">{post.name}</td>
-                          <td className="px-4 py-4 text-xs text-gray-500">
-                            {post.dateFrom}<br/>~ {post.dateTo}
-                          </td>
-                          <td className="px-6 py-4 text-center text-xs text-gray-400">{post.createdAt}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
@@ -201,7 +226,9 @@ export default function OnlineInquiry() {
               </div>
 
               <div className="flex justify-end mt-6">
-                <span className="text-xs text-gray-400">등록일: {selectedPost.createdAt}</span>
+                <span className="text-xs text-gray-400">
+                  등록일: {new Date(selectedPost.created_at).toLocaleDateString('ko-KR')}
+                </span>
               </div>
             </div>
 
@@ -233,6 +260,11 @@ export default function OnlineInquiry() {
           </button>
 
           <div className="bg-white rounded-2xl shadow-sm p-8 md:p-12">
+            {error && (
+              <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg">
+                {error}
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
@@ -314,10 +346,10 @@ export default function OnlineInquiry() {
                 <span className="text-red-400">*</span> 표시는 필수 입력 항목입니다.
               </p>
 
-              <button type="submit"
-                className="w-full bg-[#8BC34A] hover:bg-[#689F38] text-white py-4 rounded-lg transition-colors flex items-center justify-center gap-3 font-semibold text-base">
-                <Send size={18} />
-                문의 보내기
+              <button type="submit" disabled={submitting}
+                className="w-full bg-[#8BC34A] hover:bg-[#689F38] disabled:opacity-60 disabled:cursor-not-allowed text-white py-4 rounded-lg transition-colors flex items-center justify-center gap-3 font-semibold text-base">
+                {submitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                {submitting ? '제출 중...' : '문의 보내기'}
               </button>
             </form>
           </div>
