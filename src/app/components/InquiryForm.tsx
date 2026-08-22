@@ -36,7 +36,16 @@ export default function InquiryForm() {
     setSubmitting(true);
     setError(null);
 
-    const { error } = await supabase.from('Inquiry').insert([form]);
+    const { error } = await supabase.from('inquiry').insert([{
+      name: form.name,
+      company: form.company,
+      phone: form.phone,
+      email: form.email,
+      address: form.address,
+      date_from: form.dateFrom,
+      date_to: form.dateTo,
+      message: form.message,
+    }]);
 
     if (error) {
       console.error('Inquiry submit failed:', error);
