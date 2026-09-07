@@ -18,7 +18,7 @@ const emptyForm: FormData = {
   address: '', dateFrom: '', dateTo: '', message: '',
 };
 
-const inputClass = 'w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8BC34A]/40 focus:border-[#8BC34A] transition-colors text-sm';
+const inputClass = 'w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#053573]/40 focus:border-[#053573] transition-colors text-sm';
 const labelClass = 'flex items-center gap-2 text-sm font-medium text-gray-700 mb-2';
 
 export default function InquiryForm() {
@@ -61,7 +61,7 @@ export default function InquiryForm() {
 
   if (submitted) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm p-8 md:p-12 text-center">
+      <div className="text-center py-20">
         <div className="w-16 h-16 bg-[#8BC34A]/10 rounded-full flex items-center justify-center mx-auto mb-6">
           <CheckCircle2 className="text-[#8BC34A]" size={32} />
         </div>
@@ -78,7 +78,7 @@ export default function InquiryForm() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-8 md:p-12">
+    <div>
       {error && (
         <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg">
           {error}
@@ -88,7 +88,7 @@ export default function InquiryForm() {
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <label className={labelClass}>
-              <User size={15} className="text-[#8BC34A]" />
+              <User size={15} className="text-[#053573]" />
               성함 <span className="text-red-400">*</span>
             </label>
             <input type="text" required value={form.name}
@@ -97,7 +97,7 @@ export default function InquiryForm() {
           </div>
           <div>
             <label className={labelClass}>
-              <Building2 size={15} className="text-[#8BC34A]" />
+              <Building2 size={15} className="text-[#053573]" />
               회사명
             </label>
             <input type="text" value={form.company}
@@ -106,7 +106,7 @@ export default function InquiryForm() {
           </div>
           <div>
             <label className={labelClass}>
-              <Phone size={15} className="text-[#8BC34A]" />
+              <Phone size={15} className="text-[#053573]" />
               연락처 <span className="text-red-400">*</span>
             </label>
             <input type="tel" required value={form.phone}
@@ -115,7 +115,7 @@ export default function InquiryForm() {
           </div>
           <div>
             <label className={labelClass}>
-              <Mail size={15} className="text-[#8BC34A]" />
+              <Mail size={15} className="text-[#053573]" />
               이메일
             </label>
             <input type="email" value={form.email}
@@ -126,7 +126,7 @@ export default function InquiryForm() {
 
         <div>
           <label className={labelClass}>
-            <MapPin size={15} className="text-[#8BC34A]" />
+            <MapPin size={15} className="text-[#053573]" />
             현장 주소 <span className="text-red-400">*</span>
           </label>
           <input type="text" required value={form.address}
@@ -136,7 +136,7 @@ export default function InquiryForm() {
 
         <div>
           <label className={labelClass}>
-            <Calendar size={15} className="text-[#8BC34A]" />
+            <Calendar size={15} className="text-[#053573]" />
             기간 <span className="text-red-400">*</span>
           </label>
           <div className="flex items-center gap-3">
@@ -152,7 +152,7 @@ export default function InquiryForm() {
 
         <div>
           <label className={labelClass}>
-            <FileText size={15} className="text-[#8BC34A]" />
+            <FileText size={15} className="text-[#053573]" />
             상세 문의 내용 <span className="text-red-400">*</span>
           </label>
           <textarea required rows={6} value={form.message}
@@ -166,7 +166,7 @@ export default function InquiryForm() {
         </p>
 
         <button type="submit" disabled={submitting}
-          className="w-full bg-[#8BC34A] hover:bg-[#689F38] disabled:opacity-60 disabled:cursor-not-allowed text-white py-4 rounded-lg transition-colors flex items-center justify-center gap-3 font-semibold text-base">
+          className="w-full border-2 border-[#053573] text-[#053573] hover:bg-[#053573] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed py-4 rounded-lg transition-colors flex items-center justify-center gap-3 font-semibold text-base">
           {submitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
           {submitting ? '제출 중...' : '문의 보내기'}
         </button>

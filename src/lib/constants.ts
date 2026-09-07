@@ -1,3 +1,5 @@
+export const BRAND_BLUE = '#053573';
+
 export const CONTACT = {
   companyName: 'Eco Power Gen',
   ceo: '이기춘',
