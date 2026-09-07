@@ -62,7 +62,7 @@ export default function AdminLoginPage() {
           </div>
           <button
             type="submit" disabled={submitting}
-            className="w-full border-2 border-[#053573] text-[#053573] hover:bg-[#053573] hover:text-white disabled:opacity-60 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 font-semibold text-sm"
+            className="w-full border-2 border-[#053573] text-[#053573] hover:bg-[#053573] hover:text-white disabled:opacity-60 py-3 transition-colors flex items-center justify-center gap-2 font-semibold text-sm"
           >
             {submitting ? <Loader2 size={16} className="animate-spin" /> : null}
             {submitting ? '로그인 중...' : '로그인'}

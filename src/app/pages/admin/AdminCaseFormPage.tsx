@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router';
 import { ImagePlus, X, Loader2 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 
-const inputClass = 'w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#053573]/40 focus:border-[#053573] transition-colors text-sm';
+const inputClass = 'w-full px-4 py-3 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#053573]/40 focus:border-[#053573] transition-colors text-sm';
 const labelClass = 'flex items-center gap-2 text-sm font-medium text-gray-700 mb-2';
 
 interface PendingImage {
@@ -82,7 +82,8 @@ export default function AdminCaseFormPage() {
 
     const uploadedUrls: string[] = [];
     for (const { file } of newImages) {
-      const path = `${crypto.randomUUID()}-${file.name}`;
+      const ext = file.name.split('.').pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+      const path = `${crypto.randomUUID()}.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from('case-images')
         .upload(path, file);
@@ -133,7 +134,7 @@ export default function AdminCaseFormPage() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold mb-8">{isEdit ? '설치사례 수정' : '새 설치사례 작성'}</h1>
 
-        <div className="bg-white rounded-2xl shadow-sm p-8">
+        <div>
           {error && (
             <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg">
               {error}
@@ -186,7 +187,7 @@ export default function AdminCaseFormPage() {
                     </button>
                   </div>
                 ))}
-                <label className="aspect-square rounded-lg border-2 border-dashed border-gray-200 flex items-center justify-center cursor-pointer hover:border-[#8BC34A] transition-colors">
+                <label className="aspect-square border border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-[#053573] transition-colors">
                   <ImagePlus size={24} className="text-gray-300" />
                   <input type="file" accept="image/*" multiple className="hidden" onChange={handleFileChange} />
                 </label>
@@ -196,7 +197,7 @@ export default function AdminCaseFormPage() {
 
             <button
               type="submit" disabled={submitting}
-              className="w-full border-2 border-[#053573] text-[#053573] hover:bg-[#053573] hover:text-white disabled:opacity-60 py-3.5 rounded-lg transition-colors flex items-center justify-center gap-2 font-semibold text-sm"
+              className="w-full border-2 border-[#053573] text-[#053573] hover:bg-[#053573] hover:text-white disabled:opacity-60 py-3.5 transition-colors flex items-center justify-center gap-2 font-semibold text-sm"
             >
               {submitting ? <Loader2 size={16} className="animate-spin" /> : null}
               {submitting ? '저장 중...' : isEdit ? '수정하기' : '등록하기'}

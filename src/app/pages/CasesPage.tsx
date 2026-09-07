@@ -51,7 +51,7 @@ export default function CasesPage() {
             <div className="flex justify-end mb-6">
               <Link
                 to="/admin/cases/new"
-                className="border-2 border-[#053573] text-[#053573] hover:bg-[#053573] hover:text-white px-5 py-2.5 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
+                className="border-2 border-[#053573] text-[#053573] hover:bg-[#053573] hover:text-white px-5 py-2.5 transition-colors flex items-center gap-2 text-sm font-medium"
               >
                 <Plus size={16} /> 등록하기
               </Link>

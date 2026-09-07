@@ -25,7 +25,7 @@ export default function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-4">
             <a
               href={CONTACT.phoneHref}
-              className="border-2 border-white text-white hover:bg-[#053573] hover:border-[#053573] px-8 py-4 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer"
+              className="border-2 border-white text-white hover:bg-[#053573] hover:border-[#053573] px-8 py-4 transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               <Phone size={20} />
               상담 문의하기

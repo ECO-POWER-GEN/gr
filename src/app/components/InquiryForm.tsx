@@ -18,7 +18,7 @@ const emptyForm: FormData = {
   address: '', dateFrom: '', dateTo: '', message: '',
 };
 
-const inputClass = 'w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#053573]/40 focus:border-[#053573] transition-colors text-sm';
+const inputClass = 'w-full px-4 py-3 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#053573]/40 focus:border-[#053573] transition-colors text-sm';
 const labelClass = 'flex items-center gap-2 text-sm font-medium text-gray-700 mb-2';
 
 export default function InquiryForm() {
@@ -69,7 +69,7 @@ export default function InquiryForm() {
         <p className="text-gray-500 mb-8">빠른 시일 내에 담당자가 연락드리겠습니다.</p>
         <button
           onClick={() => setSubmitted(false)}
-          className="border border-gray-300 hover:border-gray-400 text-gray-600 px-8 py-2.5 rounded-lg transition-colors text-sm"
+          className="border border-gray-300 hover:border-gray-400 text-gray-600 px-8 py-2.5 transition-colors text-sm"
         >
           추가 문의하기
         </button>
@@ -166,7 +166,7 @@ export default function InquiryForm() {
         </p>
 
         <button type="submit" disabled={submitting}
-          className="w-full border-2 border-[#053573] text-[#053573] hover:bg-[#053573] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed py-4 rounded-lg transition-colors flex items-center justify-center gap-3 font-semibold text-base">
+          className="w-full border-2 border-[#053573] text-[#053573] hover:bg-[#053573] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed py-4 transition-colors flex items-center justify-center gap-3 font-semibold text-base">
           {submitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
           {submitting ? '제출 중...' : '문의 보내기'}
         </button>

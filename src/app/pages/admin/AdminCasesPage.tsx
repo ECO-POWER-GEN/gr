@@ -57,13 +57,13 @@ export default function AdminCasesPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/admin/cases/new"
-              className="border-2 border-[#053573] text-[#053573] hover:bg-[#053573] hover:text-white px-4 py-2.5 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
+              className="border-2 border-[#053573] text-[#053573] hover:bg-[#053573] hover:text-white px-4 py-2.5 transition-colors flex items-center gap-2 text-sm font-medium"
             >
               <Plus size={16} /> 새 글 작성
             </Link>
             <button
               onClick={handleLogout}
-              className="text-gray-500 hover:text-gray-800 px-3 py-2.5 rounded-lg flex items-center gap-2 text-sm transition-colors"
+              className="text-gray-500 hover:text-gray-800 px-3 py-2.5 flex items-center gap-2 text-sm transition-colors"
             >
               <LogOut size={16} /> 로그아웃
             </button>

@@ -43,7 +43,7 @@ export default function Header() {
           </nav>
 
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+            className="md:hidden p-2 hover:bg-gray-100"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -59,7 +59,7 @@ export default function Header() {
                 end={item.path === '/'}
                 onClick={() => setMobileMenuOpen(false)}
                 className={({ isActive }) =>
-                  `block w-full text-left px-4 py-3 rounded-lg transition-all ${
+                  `block w-full text-left px-4 py-3 transition-all ${
                     isActive
                       ? 'bg-[#8BC34A] text-white font-semibold'
                       : 'text-gray-700 hover:bg-gray-50'
